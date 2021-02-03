@@ -1,0 +1,160 @@
+def baucua(cuoc):
+     dem = 0
+     x='Ban da trung '
+     a = ["Bau", "Cua", "Tom", "Cá", "Gà", "Nai"]
+     b = random.choice(a)
+     if cuoc==b: dem=dem+1
+     c = random.choice(a)
+     if cuoc==c: dem=dem+1
+     d = random.choice(a)
+     if cuoc==d: dem=dem+1
+     draw_text('KET QUA XOC DIA:', bigfont, (255, 255, 255), DISPLAYSURFACE, 600, 200)
+     draw_text(b,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 230)
+     draw_text(c,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 250)
+     draw_text(d,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 270)
+     x=x+str(dem)+cuoc
+     if dem==0:
+         if cuoc=="ss":
+             draw_text("Lan nay chua dat", mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+         else:
+          draw_text("Ban da dat ko trúng, moi dat va xóc đĩa lai", mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+     else:
+           draw_text(x,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+     return  100 * dem
+
+def miniGameScreen(money):
+   running = True
+   kt_dat=False
+   kt= False
+   tien=money
+   cuoc = "ss"
+   DISPLAYSURFACE.fill((82, 139, 139))
+   ship = pygame.image.load("image\BCC.png")
+   DISPLAYSURFACE.blit(ship, (200, 200))
+   dia = pygame.image.load("image\DIA.jpg")
+   DISPLAYSURFACE.blit(dia, (200, 400))
+   draw_text('$ DANG CO:', mediumfont, (255, 255, 255), DISPLAYSURFACE, 600,50)
+   draw_text(str(money), mediumfont, (255, 255, 255), DISPLAYSURFACE, 750, 50)
+   while running:
+    DISPLAYSURFACE.blit(dia, (200, 400))
+   # datButton = pygame.Rect(200, 260, 60, 20)
+    xocButton = pygame.Rect(85, 279, 82, 67)
+    bauButton = pygame.Rect(328, 279, 70, 20)
+    dattomButton = pygame.Rect(200, 360, 70, 20)
+    tomButton = pygame.Rect(200, 380, 70, 20)
+    cuaButton = pygame.Rect(460, 380, 70, 20)
+    caButton = pygame.Rect(328, 380, 60, 20)
+    gaButton = pygame.Rect(460, 279, 60, 20)
+    naiButton = pygame.Rect(200, 279, 60, 20)
+    # GET MOUSE CLICK
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),xocButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),bauButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),cuaButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),tomButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),caButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),naiButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),gaButton)
+    dx, dy = pygame.mouse.get_pos()  # get clicked
+    draw_text('So Tien Thang duoc >500 Se tu dong thoat mini Game', mediumfont, (0, 0, 0), DISPLAYSURFACE, 600, 580)
+    draw_text('XOC DIA', font, (0, 0, 0), DISPLAYSURFACE, 100, 320)
+    draw_text('DAT NAI', font, (0, 0, 0), DISPLAYSURFACE, 200, 280)
+    draw_text('DAT TOM', font, (0, 0, 0), DISPLAYSURFACE, 200, 380)
+    draw_text('DAT BAU', font, (0, 0, 0), DISPLAYSURFACE, 329, 280)
+    draw_text('DAT CA', font, (0, 0, 0), DISPLAYSURFACE, 329, 380)
+    draw_text('DAT GA', font, (0, 0, 0), DISPLAYSURFACE, 461, 280)
+    draw_text('DAT Cua', font, (0, 0, 0), DISPLAYSURFACE,460, 380)
+    draw_text('MINI GAME BAU CUA', bigfont, (255, 255, 255), DISPLAYSURFACE, 450, 100)
+    draw_text('$ DANG CO:', mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 50)
+    draw_text(str(money), mediumfont, (255, 255, 255), DISPLAYSURFACE, 750, 50)
+    # if mouse click execute
+    #dat
+    if cuaButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), cuaButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(460, 360, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc="Cua"
+    if gaButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), gaButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(460,260,60,20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Gà"
+    if caButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), caButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(328, 360, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Cá"
+    if bauButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), bauButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(328, 260, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc="Bau"
+    if naiButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), naiButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(200, 260, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Nai"
+    if tomButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), tomButton, 3)
+        if clicked:
+            if kt_dat == True  : pygame.draw.rect(DISPLAYSURFACE, (255,255,255), datButton)
+            datButton = pygame.Rect(200, 360, 70, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Tom"
+
+    if xocButton.collidepoint(dx, dy):
+       pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), xocButton, 3)
+       if clicked:
+            if kt == True:
+                kt = False
+
+                DISPLAYSURFACE.fill((82, 139, 139))
+                ship = pygame.image.load("image\BCC.png")
+                DISPLAYSURFACE.blit(ship, (200, 200))
+                dia = pygame.image.load("image\DIA.jpg")
+                DISPLAYSURFACE.blit(dia, (200, 400))
+            DISPLAYSURFACE.blit(dia, (200, 420))
+            money=money+baucua(cuoc)
+            cuoc="ss"
+
+            kt=True
+    if money>500:
+       running=False
+
+
+
+            #money=10;
+           # draw_text('MINI GAME BAU CUA', bigfont, (255, 255, 255), DISPLAYSURFACE, 600, 200)
+         # pygame.exit()
+         # erlsys.exit()
+
+    clicked = False
+
+    for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        clicked = True
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        running = False
+    fpsClock.tick(FPS)
+    pygame.display.update()
+   return money

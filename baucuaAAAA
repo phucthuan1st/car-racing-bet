@@ -1,0 +1,462 @@
+import pygame, sys
+import time
+import random
+
+from pygame import *
+
+''' comment '''
+#import mainGame
+'''comment '''
+#from mainGame import *
+
+'''anything go with rect use the form (left, top, width, height)'''
+
+pygame.init()
+#from this is the define for game statistics
+FPS = 60
+fpsClock = pygame.time.Clock()
+
+WINDOWSIZE = (1280,720) #window size
+
+pygame.display.set_caption('Racing bet 888') #set Caption for title bar
+
+#menuSound = pygame.mixer.Sound('..\soundFX\menu.wav') #open sound
+
+DISPLAYSURFACE = pygame.display.set_mode(WINDOWSIZE) #create surface for mainmenu
+gMoney = 0
+
+#define the set image
+loginscreen = pygame.image.load('image\loginscreen.png')
+set0 = 'image\set0.png'
+set1 = 'image\set1.png'
+set2 = 'image\set2.png'
+set3 = 'image\set3.png'
+set4 = 'image\set4.png'
+set5 = 'image\set5.png'
+setIndex = [set0, set1, set2, set3, set4, set5]
+characterSet = 0
+
+#define font using
+font = pygame.font.SysFont(None, 20, bold=True, italic=False) #set font for drawing
+mediumfont = pygame.font.SysFont(None, 30, bold = True, italic = False)
+bigfont = pygame.font.SysFont(None, 40, bold = True, italic = False)
+
+#end define the game statistics
+#------------------------------------------------------------------------------------------------#
+
+#drawing text on screen
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x,y)
+    surface.blit(textobj, textrect)
+    return 1
+
+#running main menu
+def mainMenu(money, characterSet):
+    Running = True
+    clicked = False
+    toggleMenuSub = False
+   # menuSound.play(-1)
+    while Running:
+        MAINMENUSCREEN = pygame.image.load(setIndex[characterSet])
+        MAINMENUSCREEN = pygame.transform.scale(MAINMENUSCREEN, WINDOWSIZE)
+        DISPLAYSURFACE.blit(MAINMENUSCREEN, (0,0)) #draw background
+        draw_text(str(money), mediumfont, (255,0,0), DISPLAYSURFACE, 700, 630)
+        draw_text('YOUR CURRENT SET IS: ' + str(characterSet), font, (0,0,0), DISPLAYSURFACE, 550, 200)
+        #define the Buttons
+        exitButton = pygame.Rect(40, 38, 82, 67)
+        helpButton = pygame.Rect(55, 580, 110, 100)
+        miniGameButton = pygame.Rect(200, 580, 110, 100)
+        changeSetButton = pygame.Rect(350, 580, 110, 100)
+        shopButton = pygame.Rect(885, 580, 90, 95)
+        gameButton = pygame.Rect(1050, 580, 210, 100)
+        playButton = pygame.Rect(1075, 470, 120, 40)
+        changeNameButton = pygame.Rect(1075, 515, 120, 40)
+
+        #GET MOUSE CLICK
+        dx, dy = pygame.mouse.get_pos() #get clicked
+
+        #if mouse click execute
+        if exitButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0,0,0), exitButton, 3)
+            if clicked:
+                exitConfirmScreen()
+        if helpButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0, 0, 0), helpButton, 3)
+            if clicked:
+                helpScreen()
+        if miniGameButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0, 0, 0), miniGameButton, 3)
+            if clicked:
+                money = miniGameScreen(money)
+        if changeSetButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0, 0, 0), changeSetButton, 3)
+            if clicked:
+                characterSet = changeSetScreen(characterSet)
+        if shopButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0, 0, 0), shopButton, 3)
+            if clicked:
+                money = shopScreen(money)
+        if gameButton.collidepoint(dx, dy):
+            pygame.draw.rect(DISPLAYSURFACE, (0, 0, 0), gameButton, 3)
+            if clicked:
+                toggleMenuSub = not toggleMenuSub
+        if playButton.collidepoint(dx, dy):
+            if toggleMenuSub:
+                if clicked:
+                    if characterSet == 0:
+                        characterSet = 1
+                    #money = runGame(characterSet, money)
+        if changeNameButton.collidepoint(dx, dy):
+            if toggleMenuSub:
+                if clicked:
+                    draw_text('PRESSED', mediumfont, (0,0,0), DISPLAYSURFACE, 500, 500)
+        clicked = False
+
+    #checking exit game or input mouse click
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    clicked = True
+    #if menusub is on then draw it
+        if toggleMenuSub:
+            drawGameMenuSub()
+
+    #update screen every frame of loop
+        fpsClock.tick(FPS)
+        pygame.display.update() #update screen every execution
+    return Running #return the running status to main
+
+def exitConfirmScreen():
+    running = True
+    clicked = False
+    while running:
+        DISPLAYSURFACE.fill((0,0,0))
+        draw_text('Confirm Exit?', bigfont, (255,255,255), DISPLAYSURFACE, 500, 200)
+        dx, dy = pygame.mouse.get_pos()
+
+        #define and draw yes/no buttons
+        yesButton = pygame.Rect(480, 300, 50, 50)
+        noButton = pygame.Rect(680, 300, 50, 50)
+        pygame.draw.rect(DISPLAYSURFACE, (255,255,255), yesButton)
+        draw_text('Yes', font, (0,0,0), DISPLAYSURFACE, 490, 320)
+        pygame.draw.rect(DISPLAYSURFACE, (255,255,255), noButton)
+        draw_text('No', font, (0,0,0), DISPLAYSURFACE, 695, 320)
+
+        if yesButton.collidepoint(dx,dy):
+            if clicked:
+                pygame.exit()
+                sys.exit()
+        elif noButton.collidepoint(dx,dy):
+            if clicked:
+                running = False
+
+        clicked = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    clicked = True
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+        fpsClock.tick(FPS)
+        pygame.display.update()
+    return running
+
+def drawHelp():
+    draw_text('HELP', bigfont, (255,255,255), DISPLAYSURFACE, 620, 20)
+    draw_text('Welcome to Racing Bet Game', mediumfont, (255,255,255), DISPLAYSURFACE, 500, 50)
+    draw_text('Nothing to see here at this time', font, (255,255,255), DISPLAYSURFACE, 550, 100)
+    draw_text('Press ESC Key to return Main Menu', font, (255,255,255), DISPLAYSURFACE, 530, 120)
+
+def helpScreen():
+    running = True
+    while running:
+        DISPLAYSURFACE.fill((0,0,0))
+        drawHelp()
+        #check event
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+        fpsClock.tick(FPS)
+        pygame.display.update()
+
+def baucua(cuoc):
+     dem = 0
+     x='Ban da trung '
+     a = ["Bau", "Cua", "Tom", "Cá", "Gà", "Nai"]
+     b = random.choice(a)
+     if cuoc==b: dem=dem+1
+     c = random.choice(a)
+     if cuoc==c: dem=dem+1
+     d = random.choice(a)
+     if cuoc==d: dem=dem+1
+     draw_text('KET QUA XOC DIA:', bigfont, (255, 255, 255), DISPLAYSURFACE, 600, 200)
+     draw_text(b,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 230)
+     draw_text(c,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 250)
+     draw_text(d,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 270)
+     x=x+str(dem)+cuoc
+     if dem==0:
+         if cuoc=="ss":
+             draw_text("Lan nay chua dat", mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+         else:
+          draw_text("Ban da dat ko trúng, moi dat va xóc đĩa lai", mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+     else:
+           draw_text(x,mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 370)
+     return  100 * dem
+
+def miniGameScreen(money):
+   running = True
+   kt_dat=False
+   kt= False
+   tien=money
+   cuoc = "ss"
+   DISPLAYSURFACE.fill((82, 139, 139))
+   ship = pygame.image.load("image\BCC.png")
+   DISPLAYSURFACE.blit(ship, (200, 200))
+   dia = pygame.image.load("image\DIA.jpg")
+   DISPLAYSURFACE.blit(dia, (200, 400))
+   draw_text('$ DANG CO:', mediumfont, (255, 255, 255), DISPLAYSURFACE, 600,50)
+   draw_text(str(money), mediumfont, (255, 255, 255), DISPLAYSURFACE, 750, 50)
+   while running:
+    DISPLAYSURFACE.blit(dia, (200, 400))
+   # datButton = pygame.Rect(200, 260, 60, 20)
+    xocButton = pygame.Rect(85, 279, 82, 67)
+    bauButton = pygame.Rect(328, 279, 70, 20)
+    dattomButton = pygame.Rect(200, 360, 70, 20)
+    tomButton = pygame.Rect(200, 380, 70, 20)
+    cuaButton = pygame.Rect(460, 380, 70, 20)
+    caButton = pygame.Rect(328, 380, 60, 20)
+    gaButton = pygame.Rect(460, 279, 60, 20)
+    naiButton = pygame.Rect(200, 279, 60, 20)
+    # GET MOUSE CLICK
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),xocButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),bauButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),cuaButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),tomButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),caButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),naiButton)
+    pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255),gaButton)
+    dx, dy = pygame.mouse.get_pos()  # get clicked
+    draw_text('XOC DIA', font, (0, 0, 0), DISPLAYSURFACE, 100, 320)
+    draw_text('DAT NAI', font, (0, 0, 0), DISPLAYSURFACE, 200, 280)
+    draw_text('DAT TOM', font, (0, 0, 0), DISPLAYSURFACE, 200, 380)
+    draw_text('DAT BAU', font, (0, 0, 0), DISPLAYSURFACE, 329, 280)
+    draw_text('DAT CA', font, (0, 0, 0), DISPLAYSURFACE, 329, 380)
+    draw_text('DAT GA', font, (0, 0, 0), DISPLAYSURFACE, 461, 280)
+    draw_text('DAT Cua', font, (0, 0, 0), DISPLAYSURFACE,460, 380)
+    draw_text('MINI GAME BAU CUA', bigfont, (255, 255, 255), DISPLAYSURFACE, 450, 100)
+    draw_text('$ DANG CO:', mediumfont, (255, 255, 255), DISPLAYSURFACE, 600, 50)
+    draw_text(str(money), mediumfont, (255, 255, 255), DISPLAYSURFACE, 750, 50)
+    # if mouse click execute
+    #dat
+    if cuaButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), cuaButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(460, 360, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc="Cua"
+    if gaButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), gaButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(460,260,60,20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Gà"
+    if caButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), caButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(328, 360, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Cá"
+    if bauButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), bauButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(328, 260, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc="Bau"
+    if naiButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), naiButton, 3)
+        if clicked:
+            if kt_dat == True: pygame.draw.rect(DISPLAYSURFACE, (255, 255, 255), datButton)
+            datButton = pygame.Rect(200, 260, 60, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Nai"
+    if tomButton.collidepoint(dx, dy):
+        pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), tomButton, 3)
+        if clicked:
+            if kt_dat == True  : pygame.draw.rect(DISPLAYSURFACE, (255,255,255), datButton)
+            datButton = pygame.Rect(200, 360, 70, 20)
+            pygame.draw.rect(DISPLAYSURFACE, (225, 225, 0), datButton)
+            kt_dat = True
+            cuoc = "Tom"
+
+    if xocButton.collidepoint(dx, dy):
+       pygame.draw.rect(DISPLAYSURFACE, (10, 10, 10), xocButton, 3)
+       if clicked:
+            if kt == True:
+                kt = False
+                DISPLAYSURFACE.fill((82, 139, 139))
+                ship = pygame.image.load("image\BCC.png")
+                DISPLAYSURFACE.blit(ship, (200, 200))
+                dia = pygame.image.load("image\DIA.jpg")
+                DISPLAYSURFACE.blit(dia, (200, 400))
+            DISPLAYSURFACE.blit(dia, (200, 420))
+            money=money+baucua(cuoc)
+            cuoc="ss"
+
+            kt=True
+
+
+            #money=10;
+           # draw_text('MINI GAME BAU CUA', bigfont, (255, 255, 255), DISPLAYSURFACE, 600, 200)
+         # pygame.exit()
+         # erlsys.exit()
+
+    clicked = False
+
+    for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        clicked = True
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        running = False
+    fpsClock.tick(FPS)
+    pygame.display.update()
+   return money
+
+#def miniGameEvent(money):
+#   money += 10
+#    return money
+def miniGameEvent(money):
+    running = True
+    while running:
+        DISPLAYSURFACE.fill((0,0,0))
+        drawHelp()
+        #check event
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+        fpsClock.tick(FPS)
+        pygame.display.update()
+
+
+def changeSetScreen(selectedSet):
+    running = True
+    while running:
+        DISPLAYSURFACE.fill((0,0,0))
+        draw_text('CHOSE YOUR FAVORITE SET: ', bigfont, (255,255,255), DISPLAYSURFACE, 400, 50)
+        draw_text('YOUR CURRENT SET IS: ' + str(selectedSet), mediumfont, (255,255,255), DISPLAYSURFACE, 450, 100)
+        draw_text('Press 1 to 5 to choose set', mediumfont, (255,255,255), DISPLAYSURFACE, 480, 150)
+        draw_text('Press ESC Key to return Main Menu', mediumfont, (255,255,255), DISPLAYSURFACE, 415, 200)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == ord('1'):
+                    selectedSet = 1
+                if event.key == ord('2'):
+                    selectedSet = 2
+                if event.key == ord('3'):
+                    selectedSet = 3
+                if event.key == ord('4'):
+                    selectedSet = 4
+                if event.key == ord('5'):
+                    selectedSet = 5
+                if event.key == K_ESCAPE:
+                    running = False
+
+        fpsClock.tick(FPS)
+        pygame.display.update()
+    return selectedSet
+
+def shopScreen(money):
+    running = True
+    while running:
+        DISPLAYSURFACE.fill((0,0,0))
+        draw_text('Nothing at this time', bigfont, (255,255,255), DISPLAYSURFACE, 470, 300)
+        draw_text('Money at this time is: ' + str(money), mediumfont, (255,255,255), DISPLAYSURFACE, 490, 350)
+        draw_text('Press ESC Key to return Main Menu', font, (255,255,255), DISPLAYSURFACE, 490, 200)
+        draw_text('Press 1 to 5 to buy', font, (255,255,255), DISPLAYSURFACE, 550, 400)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == ord('1'):
+                    if money < 100:
+                        draw_text('YOU DON\'T HAVE ENOUGH MONEY', bigfont, (255,255,255), DISPLAYSURFACE, 400, 500)
+                    else:
+                        money -= 100
+                if event.key == ord('2'):
+                    if money < 200:
+                        draw_text('YOU DON\'T HAVE ENOUGH MONEY', bigfont, (255,255,255), DISPLAYSURFACE, 400, 500)
+                    else:
+                        money -= 200
+                if event.key == ord('3'):
+                    if money < 300:
+                        draw_text('YOU DON\'T HAVE ENOUGH MONEY', bigfont, (255,255,255), DISPLAYSURFACE, 400, 500)
+                    else:
+                        money -= 300
+                if event.key == ord('4'):
+                    if money < 400:
+                        draw_text('YOU DON\'T HAVE ENOUGH MONEY', bigfont, (255,255,255), DISPLAYSURFACE, 400, 500)
+                    else:
+                        money -= 400
+                if event.key == ord('5'):
+                    if money < 500:
+                        draw_text('YOU DON\'T HAVE ENOUGHT MONEY', bigfont, (255,255,255), DISPLAYSURFACE, 400, 500)
+                    else:
+                        money -= 500
+                if event.key == K_ESCAPE:
+                    running = False
+        fpsClock.tick(FPS)
+        pygame.display.update()
+    return money
+
+def drawGameMenuSub():
+    playButton = pygame.Rect(1075, 470, 120, 40)
+    changeNameButton = pygame.Rect(1075, 515, 120, 40)
+    pygame.draw.rect(DISPLAYSURFACE, (0,0,0), playButton, 3)
+    pygame.draw.rect(DISPLAYSURFACE, (0,0,0), changeNameButton, 3)
+    draw_text('PLAY', font, (0,0,0), DISPLAYSURFACE, 1115, 485)
+    draw_text('CHANGE NAME', font, (0,0,0), DISPLAYSURFACE, 1080, 530)
+
+def changeNameScreen():
+    pass
+
+def main():
+    return mainMenu(gMoney, characterSet)
+
+if __name__ == "__main__":
+    main()
+
+#end of file
